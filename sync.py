@@ -17,6 +17,7 @@ destination_prefix = os.environ['INPUT_DESTINATION_PREFIX']
 exclude = os.environ['INPUT_EXCLUDE']
 delete = os.environ['INPUT_DELETE']
 quiet = os.environ['INPUT_QUIET']
+acl = os.environ['INPUT_ACL']
 
 args = ['aws s3 sync']
 
@@ -44,7 +45,12 @@ args.append(destination)
 
 # Check if 'exclude' flag is used:
 if exclude:
-    args.append(f'--exclude "{exclude}"')
+    # Split the 'exclude' string by ',' to get a list of elements
+    elements = exclude.split(',')
+    
+    # Add each element to the args list
+    for element in elements:
+        args.append(f'--exclude "{element.strip()}"')
 
 # Check if 'delete' flag is used:
 if delete.lower() == "true":
@@ -53,6 +59,10 @@ if delete.lower() == "true":
 # Check if 'quiet' flag is used:
 if quiet.lower() == "true":
     args.append("--quiet")
+
+# Check if 'acl' flag is used:
+if acl:
+    args.append(f'--acl {acl}')
 
 
 cmd = ' '.join(args)
